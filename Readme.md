@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Leonid Konovalov](https://up.htmlacademy.ru/javascript-individual/2/user/176546).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Хабиров](https://htmlacademy.ru/profile/alex_khab).
 
 ---
 
