@@ -30,3 +30,7 @@ function isNumber(str) {
   }
   return parseInt(newString, 10);
 }
+
+isString('Civic', 5);
+isPalindrome('Civic');
+isNumber(2023);
