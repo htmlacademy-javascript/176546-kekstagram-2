@@ -1,26 +1,32 @@
-function checkString(string, maxLength) {
-  return string.length <= maxLength;
-}
+const isString = (str, maxLength) => str.length <= maxLength;
 
-function checkPalindrome(string) {
-  const normaliseString = string.toUpperCase().replaceAll(' ', '');
-  let newString = '';
+function isPalindrome(str) {
+  const newString = str.replaceAll(' ', '').toLowerCase();
+  const len = newString.length;
 
-  for (let i = normaliseString.length - 1; i >= 0; i--) {
-    newString += normaliseString[i];
+  if (len <= 1) {
+    return true;
   }
 
-  return newString === normaliseString;
+  for (let i = 0; Math.floor(i < len / 2); i++) {
+    if (newString[i] !== newString[len - 1 - i]) {
+      return false;
+    }
+  }
+  return true;
 }
 
-function checkNumber(string) {
+function isNumber(str) {
   let newString = '';
+  const normaliseString = str.toString();
+  const len = normaliseString.length;
 
-  string = string.isNaN ? parseInt(string).toString() : string.toString();
+  for (let i = 0; i <= len - 1; i++) {
+    const number = parseInt(normaliseString[i], 10);
 
-  for (let i = 0; i <= string.length - 1; i++) {
-    newString += parseInt(string[i]) >= 0 ? parseInt(string[i]) : '';
+    if (!number.isNaN && number >= 0) {
+      newString += number;
+    }
   }
-
-  return parseInt(newString);
+  return parseInt(newString, 10);
 }
