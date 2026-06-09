@@ -1,36 +1,36 @@
-const isString = (str, maxLength) => str.length <= maxLength;
+const checkString = (str, maxLength) => str.length <= maxLength;
 
-function isPalindrome(str) {
+const isPalindrome = (str) => {
   const newString = str.replaceAll(' ', '').toLowerCase();
-  const len = newString.length;
 
-  if (len <= 1) {
+  if (newString.length <= 1) {
     return true;
   }
 
-  for (let i = 0; Math.floor(i < len / 2); i++) {
-    if (newString[i] !== newString[len - 1 - i]) {
+  for (let i = 0; i < Math.floor(newString.length / 2); i++) {
+    if (newString[i] !== newString[newString.length - 1 - i]) {
       return false;
     }
   }
-  return true;
-}
 
-function isNumber(str) {
+  return true;
+};
+
+const extractNumbersFromString = (str) => {
   let newString = '';
   const normaliseString = str.toString();
-  const len = normaliseString.length;
 
-  for (let i = 0; i <= len - 1; i++) {
+  for (let i = 0; i <= normaliseString.length - 1; i++) {
     const number = parseInt(normaliseString[i], 10);
 
-    if (!number.isNaN && number >= 0) {
+    if (!isNaN(number)) {
       newString += number;
     }
   }
-  return parseInt(newString, 10);
-}
 
-isString('Civic', 5);
+  return parseInt(newString, 10);
+};
+
+checkString('Civic', 5);
 isPalindrome('Civic');
-isNumber(2023);
+extractNumbersFromString(2023);
