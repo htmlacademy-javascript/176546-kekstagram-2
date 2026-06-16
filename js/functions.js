@@ -31,18 +31,26 @@ const extractNumbersFromString = (str) => {
   return parseInt(newString, 10);
 };
 
-const timeToMinute = (time) => {
+const convertTimeToMinute = (time) => {
   const [hours, minutes] = time.split(':');
   return Number(hours) * 60 + Number(minutes);
 };
 
-const someTime = (startDay, endDay, meet, value) => timeToMinute(endDay) - timeToMinute(startDay) >= value
-    && timeToMinute(endDay) >= timeToMinute(meet)
-    && timeToMinute(endDay) - timeToMinute(meet) >= value
-    && timeToMinute(meet) >= timeToMinute(startDay);
+const calculateTime = (startDay, endDay, meet, duration) => {
+  const formattedDayStart = convertTimeToMinute(startDay);
+  const formattedDayEnd = convertTimeToMinute(endDay);
+  const formattedMeet = convertTimeToMinute(meet);
+
+  if (formattedMeet > formattedDayEnd || formattedMeet < formattedDayStart) {
+    return false;
+  }
+
+  return formattedDayEnd - formattedDayStart >= duration
+    && formattedDayEnd - formattedMeet >= duration;
+};
 
 checkString('Civic', 5);
 isPalindrome('Civic');
 extractNumbersFromString(2023);
 
-someTime('8:00', '17:30', '08:00', 900);
+calculateTime('08:00', '17:30', '14:00', 90);

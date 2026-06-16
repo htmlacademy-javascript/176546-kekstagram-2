@@ -85,4 +85,4 @@ const generatePhotos = () => {
   return photosArray;
 };
 
-generatePhotos();
+export { generatePhotos };
