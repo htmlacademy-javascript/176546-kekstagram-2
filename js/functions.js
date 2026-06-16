@@ -36,12 +36,10 @@ const timeToMinute = (time) => {
   return Number(hours) * 60 + Number(minutes);
 };
 
-const someTime = (startDay, endDay, meet, value) => {
-  return timeToMinute(endDay) - timeToMinute(startDay) >= value
+const someTime = (startDay, endDay, meet, value) => timeToMinute(endDay) - timeToMinute(startDay) >= value
     && timeToMinute(endDay) >= timeToMinute(meet)
     && timeToMinute(endDay) - timeToMinute(meet) >= value
     && timeToMinute(meet) >= timeToMinute(startDay);
-};
 
 checkString('Civic', 5);
 isPalindrome('Civic');
