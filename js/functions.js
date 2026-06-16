@@ -31,6 +31,18 @@ const extractNumbersFromString = (str) => {
   return parseInt(newString, 10);
 };
 
+const timeToMinute = (time) => {
+  const [hours, minutes] = time.split(':');
+  return Number(hours) * 60 + Number(minutes);
+};
+
+const someTime = (startDay, endDay, meet, value) => timeToMinute(endDay) - timeToMinute(startDay) >= value
+    && timeToMinute(endDay) >= timeToMinute(meet)
+    && timeToMinute(endDay) - timeToMinute(meet) >= value
+    && timeToMinute(meet) >= timeToMinute(startDay);
+
 checkString('Civic', 5);
 isPalindrome('Civic');
 extractNumbersFromString(2023);
+
+someTime('8:00', '17:30', '08:00', 900);
