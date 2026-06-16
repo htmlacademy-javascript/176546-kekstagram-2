@@ -32,15 +32,13 @@ const PHOTOS_RANGE_END = 25;
 
 const COMMENTS_RANGE_START = 0;
 const COMMENTS_RANGE_END = 30;
-const commentsArray = Array.from({ length: COMMENTS_RANGE_END * PHOTOS_RANGE_END}, (_, i) => i + 1);
-const previousComments = [];
 
 const AVATAR_RANGE_END = 6;
-const avatarId = Array.from({ length: AVATAR_RANGE_END }, (_, i) => i + 1);
-
 const LIKES_RANGE_START = 15;
 const LIKES_RANGE_END = 200;
-const likesArray = Array.from({ length: LIKES_RANGE_END - LIKES_RANGE_START}, (_, i) => i + 1 + LIKES_RANGE_START);
+
+const commentsArray = Array.from({ length: COMMENTS_RANGE_END * PHOTOS_RANGE_END}, (_, i) => i + 1);
+const previousComments = [];
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -51,50 +49,40 @@ const getRandomInteger = (a, b) => {
 
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-function createRandomIdFromRangeGenerator (arr) {
-
-  return function () {
+const createRandomIdFromRangeGenerator = (arr) =>
+  () => {
     let currentValue = getRandomArrayElement(arr);
     if (previousComments.length >= (arr.length + 1)) {
       return null;
     }
+
     while (previousComments.includes(currentValue)) {
       currentValue = getRandomArrayElement(arr);
     }
+
     previousComments.push(currentValue);
+
     return currentValue;
   };
-}
 
 const generateCommentId = createRandomIdFromRangeGenerator(commentsArray);
 
 const createComment = (commentsId) => ({
   id: commentsId,
-  avatar: `img/avatar-${getRandomArrayElement(avatarId)}.svg`,
+  avatar: `img/avatar-${getRandomInteger(1, AVATAR_RANGE_END)}.svg`,
   message: `${getRandomArrayElement(MESSAGES)} ${getRandomArrayElement(MESSAGES)}`,
   name: getRandomArrayElement(NAMES),
 });
-
-const similarComments = () => {
-  const arr = [];
-  const getRandomComments = getRandomInteger(COMMENTS_RANGE_START, COMMENTS_RANGE_END);
-
-  for (let i = 0; i < getRandomComments; i++) {
-    arr.push(createComment(generateCommentId()));
-  }
-
-  return arr;
-};
 
 const createPhoto = (photoId) => ({
   id: photoId,
   url: `photos/${photoId}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
-  likes: getRandomArrayElement(likesArray),
-  comments: similarComments(),
+  likes: getRandomInteger(LIKES_RANGE_START, LIKES_RANGE_END),
+  comments: Array.from({ length: getRandomInteger(COMMENTS_RANGE_START, COMMENTS_RANGE_END)}, () => createComment(generateCommentId())),
 });
 
-const similarPhotos = () => {
+const generatePhotos = () => {
   const photosArray = [];
 
   for (let photoId = PHOTOS_RANGE_START; photoId <= PHOTOS_RANGE_END; photoId++) {
@@ -104,4 +92,4 @@ const similarPhotos = () => {
   return photosArray;
 };
 
-similarPhotos();
+generatePhotos();
