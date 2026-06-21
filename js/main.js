@@ -1,5 +1,3 @@
-import { generatePhotos } from './data.js';
+import { createThumbnails } from './thumbnails.js';
 
-const photos = generatePhotos();
-// eslint-disable-next-line no-console
-console.log({photos});
+createThumbnails();
