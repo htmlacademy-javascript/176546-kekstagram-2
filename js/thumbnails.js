@@ -10,6 +10,7 @@ const createThumbnails = (photos) => {
   photos.forEach((photo) => {
     const photoElement = pictureTemplate.cloneNode(true);
 
+    photoElement.querySelector('.picture__img').dataset.id = photo.id;
     photoElement.querySelector('.picture__img').src = photo.url;
     photoElement.querySelector('.picture__img').alt = photo.description;
     photoElement.querySelector('.picture__likes').textContent = photo.likes;
