@@ -1,21 +1,21 @@
-import { generatePhotos } from './data.js';
+const picturesElement = document.querySelector('.pictures');
+const pictureTemplate = document.querySelector('#picture')
+  .content
+  .querySelector('.picture');
 
-const createThumbnails = () => {
-  const picturesElement = document.querySelector('.pictures');
-  const pictureTemplate = document.querySelector('#picture')
-    .content
-    .querySelector('.picture');
-
-  const photos = generatePhotos();
+const createThumbnails = (photos) => {
 
   const fragment = document.createDocumentFragment();
 
   photos.forEach((photo) => {
     const photoElement = pictureTemplate.cloneNode(true);
+
+    photoElement.dataset.id = photo.id;
     photoElement.querySelector('.picture__img').src = photo.url;
     photoElement.querySelector('.picture__img').alt = photo.description;
     photoElement.querySelector('.picture__likes').textContent = photo.likes;
-    photoElement.querySelector('.picture__comments').textContent = photo.comments;
+    photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
+
     fragment.appendChild(photoElement);
   });
 
