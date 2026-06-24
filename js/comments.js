@@ -55,6 +55,10 @@ const loadMoreItems = () => {
 
   const remaining = allComments.length - currentIndex;
   loadButton.classList.toggle('hidden', remaining <= 0);
+
+  if (remaining === 0) {
+    loadButton.removeEventListener('click', loadMoreItems);
+  }
 };
 
 const initComments = (comments) => {
@@ -69,6 +73,10 @@ const initComments = (comments) => {
 
   const remaining = allComments.length - currentIndex;
   loadButton.classList.toggle('hidden', remaining <= 0);
+
+  if (remaining === 0) {
+    loadButton.removeEventListener('click', loadMoreItems);
+  }
 };
 
 export { initComments };
