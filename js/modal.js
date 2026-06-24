@@ -14,14 +14,14 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-function openUserModal () {
+const openUserModal = () => {
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
   socialCommentCount.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 
   document.addEventListener('keydown', onDocumentKeydown);
-}
+};
 
 function closeUserModal () {
   bigPicture.classList.add('hidden');
@@ -32,20 +32,27 @@ function closeUserModal () {
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-const createModalEvents = (arr, func) => {
-  pictures.addEventListener('click', (evt) => {
-    openUserModal();
-    if (evt.target.hasAttribute('data-id')) {
-      const targetElement = Array.from(arr).find((el) => Number(el.id) === Number(evt.target.dataset.id));
-      if (targetElement) {
-        func(targetElement);
-      }
-    }
-  });
+const onPicturesContainerClick = (evt, photos, cb) => {
+  const id = evt.target.closest('.picture').dataset.id;
+
+  if (!id) {
+    return;
+  }
+
+  const targetElement = photos.find((el) => el.id === Number(id));
+
+  if (!targetElement) {
+    return;
+  }
+
+  openUserModal();
+  cb(targetElement);
 };
 
-bigPictureCancel.addEventListener('click', () => {
-  closeUserModal();
-});
+const setPictureListener = (photos, cb) => {
+  pictures.addEventListener('click', (evt) => onPicturesContainerClick(evt, photos, cb));
 
-export { createModalEvents };
+  bigPictureCancel.addEventListener('click', () => closeUserModal());
+};
+
+export { setPictureListener };

@@ -1,4 +1,4 @@
-import { createComments } from './comments.js';
+import { renderComments } from './comments.js';
 
 const urlElement = document.querySelector('.big-picture__img img');
 const likesElement = document.querySelector('.likes-count');
@@ -17,7 +17,7 @@ const createBigPicture = (element) => {
 
   const socialCommentElement = document.querySelectorAll('.social__comment');
   showCountCommentElement.textContent = String(socialCommentElement.length);
-  socialCommentsElement.appendChild(createComments(element.comments));
+  renderComments(element.comments);
 };
 
 export { createBigPicture };

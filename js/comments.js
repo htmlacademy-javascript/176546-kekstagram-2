@@ -1,6 +1,8 @@
 const socialCommentElement = document.querySelector('.social__comments');
 
-const createComments = (comments) => {
+const renderComments = (comments) => {
+  const fragment = document.createDocumentFragment();
+
   comments.forEach((comment) => {
     const li = document.createElement('li');
     const img = document.createElement('img');
@@ -20,10 +22,10 @@ const createComments = (comments) => {
     li.appendChild(img);
     li.appendChild(p);
 
-    socialCommentElement.appendChild(li);
+    fragment.appendChild(li);
   });
 
-  return socialCommentElement;
+  socialCommentElement.appendChild(fragment);
 };
 
-export { createComments };
+export { renderComments };
