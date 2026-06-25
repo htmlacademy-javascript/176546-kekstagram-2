@@ -1,4 +1,4 @@
-const socialCommentElement = document.querySelector('.social__comments');
+const socialCommentsElement = document.querySelector('.social__comments');
 const showCountCommentElement = document.querySelector('.social__comment-shown-count');
 const loadButton = document.querySelector('.comments-loader');
 
@@ -39,10 +39,10 @@ const renderComments = ({comments, addToExisting = false}) => {
   });
 
   if (addToExisting) {
-    socialCommentElement.appendChild(fragment);
+    socialCommentsElement.appendChild(fragment);
   } else {
-    socialCommentElement.innerHTML = '';
-    socialCommentElement.appendChild(fragment);
+    socialCommentsElement.innerHTML = '';
+    socialCommentsElement.appendChild(fragment);
   }
 
   showCountCommentElement.textContent = String(currentIndex);
