@@ -2,56 +2,86 @@ import {isEscapeKey} from './util.js';
 
 const body = document.querySelector('body');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
+const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadInput = document.querySelector('.img-upload__input');
-const imgUploadCancel = imgUploadOverlay.querySelector('.img-upload__cancel');
-const hashTags = imgUploadOverlay.querySelector('.text__hashtags');
+const imgUploadCancel = imgUploadForm.querySelector('.img-upload__cancel');
+const hashTags = imgUploadForm.querySelector('.text__hashtags');
+const descriptionTextarea = imgUploadForm.querySelector('.text__description');
+const wrapper = document.querySelector('.img-upload__field-wrapper');
 
-const pristine = new Pristine(imgUploadOverlay, {
+const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--error',
+  successClass: 'img-upload__field-wrapper--success',
   errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__field-wrapper--error'
+  errorTextTag: 'div',
+  errorTextClass: 'img-upload__field-wrapper--error-text'
 });
 
 const validateHashTag = (value) => {
-  const newHashtag = [];
+  if (value.trim() === '') {
+    return true;
+  }
+
+  const hashtags = value.trim().split(/\s+/);
   const hashtagReg = /^#[a-zа-яё0-9]{1,19}$/i;
-  const hashtagsArray = value.split(' ');
 
-  hashtagsArray.forEach((hashtag) => {
-    if (!hashtagReg.test(hashtag)) {
+  if (hashtags.length > 5) {
+    return false;
+  }
+
+  const unique = new Set();
+  for (const tag of hashtags) {
+    if (!hashtagReg.test(tag)) {
       return false;
     }
-
-    if (hashtagsArray.length > 5) {
+    const lower = tag.toLowerCase();
+    if (unique.has(lower)) {
       return false;
     }
-
-    if (newHashtag.includes(hashtag)) {
-      return false;
-    }
-
-    newHashtag.push(hashtag);
-  });
+    unique.add(lower);
+  }
 
   return true;
 };
 
-pristine.addValidator(
-  hashTags,
-  validateHashTag,
-  'Хэштег не подходит под условия'
-);
+const validateTextarea = (value) => {
+  if (value.length > 140) {
+    return false;
+  }
 
-imgUploadOverlay.addEventListener('submit', (evt) => {
+  return true;
+};
+
+const onHashTagsClick = (evt) => {
   evt.preventDefault();
-  pristine.validate();
-});
+  validateHashTag();
+};
+
+const onTextareaClick = (evt) => {
+  evt.preventDefault();
+  validateTextarea();
+};
+
+const isFormValid = () => !wrapper.classList.contains('img-upload__field-wrapper--error');
+
+const onSubmitButtonClick = (evt) => {
+  if (!isFormValid()) {
+    evt.preventDefault();
+    return false;
+  }
+};
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeUploadModal();
+    const activeElement = document.activeElement;
+    const isInputFocused = activeElement === hashTags ||
+                          activeElement === descriptionTextarea;
+
+    if (!isInputFocused) {
+      evt.preventDefault();
+      closeUploadModal();
+    }
   }
 };
 
@@ -60,6 +90,21 @@ const openUploadModal = () => {
   body.classList.add('modal-open');
 
   document.addEventListener('keydown', onDocumentKeydown);
+  imgUploadForm.addEventListener('submit', (evt) => onSubmitButtonClick(evt));
+  imgUploadForm.addEventListener('input', (evt) => onHashTagsClick(evt));
+  imgUploadForm.addEventListener('input', (evt) => onTextareaClick(evt));
+
+  pristine.addValidator(
+    hashTags,
+    validateHashTag,
+    'Хэштег должен начинаться с #, содержать буквы/цифры, не более 5 уникальных'
+  );
+
+  pristine.addValidator(
+    descriptionTextarea,
+    validateTextarea,
+    'Комментарий не более 140 символов'
+  );
 };
 
 function closeUploadModal () {
@@ -68,6 +113,9 @@ function closeUploadModal () {
   imgUploadInput.value = '';
 
   document.removeEventListener('keydown', onDocumentKeydown);
+  document.removeEventListener('input', onHashTagsClick);
+  document.removeEventListener('submit', onTextareaClick);
+  document.removeEventListener('submit', onSubmitButtonClick);
 }
 
 const onUploadContainerClick = () => {
@@ -78,7 +126,6 @@ const onUploadContainerClick = () => {
 
 const setUploadListener = () => {
   imgUploadInput.addEventListener('click', () => onUploadContainerClick());
-
   imgUploadCancel.addEventListener('click', () => closeUploadModal());
 };
 
