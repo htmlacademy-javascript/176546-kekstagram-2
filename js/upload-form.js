@@ -12,6 +12,9 @@ const scaleControlSmaller = document.querySelector('.scale__control--smaller');
 const scaleControlBigger = document.querySelector('.scale__control--bigger');
 const scaleControlValue = document.querySelector('.scale__control--value');
 const preview = document.querySelector('.img-upload__preview');
+const effectLevelValue = document.querySelector('.effect-level__value');
+// const imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+const effectLevelSlider = document.querySelector('.effect-level__slider');
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -21,6 +24,22 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextTag: 'div',
   errorTextClass: 'img-upload__field-wrapper--error-text'
 });
+
+const startEffectLevelSlider = () => {
+  noUiSlider.create(effectLevelSlider, {
+    range: {
+      min: 0,
+      max: 100,
+    },
+    start: 100,
+  });
+
+  effectLevelSlider.noUiSlider.on('update', (values) => {
+    if (effectLevelValue) {
+      effectLevelValue.value = Math.round(values[0]);
+    }
+  });
+};
 
 const validateHashTag = (value) => {
   if (value.trim() === '') {
@@ -129,6 +148,8 @@ const openUploadModal = () => {
     validateTextarea,
     'Комментарий не более 140 символов'
   );
+
+  startEffectLevelSlider();
 };
 
 function closeUploadModal () {
