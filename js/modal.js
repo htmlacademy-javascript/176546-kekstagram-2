@@ -27,13 +27,13 @@ function closeUserModal () {
 }
 
 const onPicturesContainerClick = (evt, photos, cb) => {
-  const id = evt.target.closest('.picture').dataset.id;
+  const pictureElement = evt.target.closest('.picture');
 
-  if (!id) {
+  if (!pictureElement || pictureElement.dataset.id) {
     return;
   }
 
-  const targetElement = photos.find((el) => el.id === Number(id));
+  const targetElement = photos.find((el) => el.id === Number(pictureElement.dataset.id));
 
   if (!targetElement) {
     return;
