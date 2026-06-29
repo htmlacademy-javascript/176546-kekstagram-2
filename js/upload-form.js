@@ -8,6 +8,10 @@ const imgUploadCancel = imgUploadForm.querySelector('.img-upload__cancel');
 const hashTags = imgUploadForm.querySelector('.text__hashtags');
 const descriptionTextarea = imgUploadForm.querySelector('.text__description');
 const wrapper = document.querySelector('.img-upload__field-wrapper');
+const scaleControlSmaller = document.querySelector('.scale__control--smaller');
+const scaleControlBigger = document.querySelector('.scale__control--bigger');
+const scaleControlValue = document.querySelector('.scale__control--value');
+const preview = document.querySelector('.img-upload__preview');
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -45,13 +49,7 @@ const validateHashTag = (value) => {
   return true;
 };
 
-const validateTextarea = (value) => {
-  if (value.length > 140) {
-    return false;
-  }
-
-  return true;
-};
+const validateTextarea = (value) => value.length <= 140;
 
 const onHashTagsClick = (evt) => {
   evt.preventDefault();
@@ -69,6 +67,30 @@ const onSubmitButtonClick = (evt) => {
   if (!isFormValid()) {
     evt.preventDefault();
     return false;
+  }
+};
+
+const onScaleControlSmallerClick = () => {
+  const currentValue = parseInt(scaleControlValue.value, 10);
+  if (!isNaN(currentValue) && currentValue > 25) {
+    const scale = currentValue - 25;
+    scaleControlValue.value = `${scale}%`;
+    preview.style.transform = `scale(${scale / 100})`;
+  } else {
+    scaleControlValue.value = '25%';
+    preview.style.transform = 'scale(0.25)';
+  }
+};
+
+const onScaleControlBiggerClick = () => {
+  const currentValue = parseInt(scaleControlValue.value, 10);
+  if (!isNaN(currentValue) && currentValue < 100) {
+    const scale = currentValue + 25;
+    scaleControlValue.value = `${scale}%`;
+    preview.style.transform = `scale(${scale / 100})`;
+  } else {
+    scaleControlValue.value = '100%';
+    preview.style.transform = 'scale(1)';
   }
 };
 
@@ -91,8 +113,10 @@ const openUploadModal = () => {
 
   document.addEventListener('keydown', onDocumentKeydown);
   imgUploadForm.addEventListener('submit', (evt) => onSubmitButtonClick(evt));
-  imgUploadForm.addEventListener('input', (evt) => onHashTagsClick(evt));
-  imgUploadForm.addEventListener('input', (evt) => onTextareaClick(evt));
+  hashTags.addEventListener('input', (evt) => onHashTagsClick(evt));
+  descriptionTextarea.addEventListener('input', (evt) => onTextareaClick(evt));
+  scaleControlSmaller.addEventListener('click', () => onScaleControlSmallerClick());
+  scaleControlBigger.addEventListener('click', () => onScaleControlBiggerClick());
 
   pristine.addValidator(
     hashTags,
