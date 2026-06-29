@@ -59,8 +59,6 @@ const initValidation = () => {
   );
 };
 
-const validateForm = () => {
-  return pristine.validate();
-};
+const validateForm = () => pristine.validate();
 
 export { initValidation, validateForm };
