@@ -17,28 +17,31 @@ const effectConfig = {
 
 const slider = noUiSlider.create(sliderContainer, {
   range: {
-    min: 0,
-    max: 100
+    min: effectConfig.none.from,
+    max: effectConfig.none.to
   },
-  start: 100,
-  step: 1,
+  start: effectConfig.none.to,
+  step: effectConfig.none.step,
   connect: 'lower',
   format: {
-    to: (value) => Math.round(value),
+    to: (value) => {
+      const config = effectConfig[currentEffect];
+      if (config && config.step >= 1) {
+        return Math.round(value);
+      }
+      return Math.round(value * 100) / 100;
+    },
     from: (value) => parseFloat(value)
   }
 });
 
-const applyEffect = (effect, intensity) => {
-  if (effect === 'none') {
+const applyEffect = (value) => {
+  if (currentEffect === 'none') {
     imagePreview.style.filter = 'none';
     return;
   }
 
-  const config = effectConfig[effect];
-  const range = config.to - config.from;
-  const value = config.from + (intensity / 100) * range;
-
+  const config = effectConfig[currentEffect];
   const formattedValue = config.step >= 1
     ? Math.round(value)
     : Math.round(value * 100) / 100;
@@ -47,33 +50,63 @@ const applyEffect = (effect, intensity) => {
 };
 
 const changeEffectList = (evt) => {
-  if (evt.target.classList.contains('effects__radio')) {
-    const effect = evt.target.value;
-    currentEffect = effect;
+  currentEffect = evt.target.value;
+  const config = effectConfig[currentEffect];
 
-    if (effect === 'none') {
-      imageUploadEffectLevel.style.display = 'none';
-      imagePreview.style.filter = 'none';
-    } else {
-      imageUploadEffectLevel.style.display = 'block';
+  if (currentEffect === 'none') {
+    imageUploadEffectLevel.style.display = 'none';
+    imagePreview.style.filter = 'none';
+  } else {
+    imageUploadEffectLevel.style.display = 'block';
 
-      slider.set(100);
-      effectLevelValue.value = 100;
+    slider.updateOptions({
+      range: {
+        min: config.from,
+        max: config.to
+      },
+      start: config.to,
+      step: config.step
+    });
 
-      applyEffect(effect, 100);
-    }
+    slider.set(config.to);
+    effectLevelValue.value = config.to;
+    applyEffect(config.to);
   }
 };
 
 const sliderUpdate = () => {
   slider.on('update', (values) => {
-    const value = Math.round(values[0]);
+    const value = parseFloat(values[0]);
     effectLevelValue.value = value;
 
     if (currentEffect !== 'none') {
-      applyEffect(currentEffect, value);
+      applyEffect(value);
     }
   });
+};
+
+const resetEffects = () => {
+  currentEffect = 'none';
+  imageUploadEffectLevel.style.display = 'none';
+  imagePreview.style.filter = 'none';
+
+  const config = effectConfig.none;
+  slider.updateOptions({
+    range: {
+      min: config.from,
+      max: config.to
+    },
+    start: config.to,
+    step: config.step
+  });
+
+  slider.set(config.to);
+  effectLevelValue.value = config.to;
+
+  const noneRadio = document.querySelector('.effects__radio[value="none"]');
+  if (noneRadio) {
+    noneRadio.checked = true;
+  }
 };
 
 const initSlider = () => {
@@ -82,4 +115,4 @@ const initSlider = () => {
   sliderUpdate();
 };
 
-export { initSlider };
+export { initSlider, resetEffects };
