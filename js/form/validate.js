@@ -59,6 +59,24 @@ const initValidation = () => {
   );
 };
 
+const resetValidation = () => {
+  hashTags.value = '';
+  descriptionTextarea.value = '';
+
+  const errorTexts = imgUploadForm.querySelectorAll('.img-upload__field-wrapper--error-text');
+  errorTexts.forEach((el) => el.remove());
+
+  const wrappers = imgUploadForm.querySelectorAll('.img-upload__field-wrapper');
+  wrappers.forEach((wrapper) => {
+    wrapper.classList.remove('img-upload__field-wrapper--error');
+    wrapper.classList.remove('img-upload__field-wrapper--success');
+  });
+
+  if (pristine && typeof pristine.reset === 'function') {
+    pristine.reset();
+  }
+};
+
 const validateForm = () => pristine.validate();
 
-export { initValidation, validateForm };
+export { initValidation, validateForm, resetValidation };

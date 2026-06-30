@@ -7,31 +7,33 @@ const MIN_SCALE = 25;
 const STEP_SCALE = 25;
 const MAX_SCALE = 100;
 
+const setScale = (value) => {
+  const clampedValue = Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));
+  scaleControlValue.value = `${clampedValue}%`;
+  preview.style.transform = `scale(${clampedValue / MAX_SCALE})`;
+};
+
 const onScaleControlSmallerClick = () => {
   const currentValue = parseInt(scaleControlValue.value, 10);
-  const newScaleValue = Math.max(MIN_SCALE, currentValue - STEP_SCALE);
-
-  scaleControlValue.value = `${newScaleValue}%`;
-  preview.style.transform = `scale(${newScaleValue / MAX_SCALE})`;
+  setScale(currentValue - STEP_SCALE);
 };
 
 const onScaleControlBiggerClick = () => {
   const currentValue = parseInt(scaleControlValue.value, 10);
-
-  const newScaleValue = Math.min(MAX_SCALE, currentValue + STEP_SCALE);
-
-  scaleControlValue.value = `${newScaleValue}%`;
-  preview.style.transform = `scale(${newScaleValue / MAX_SCALE})`;
+  setScale(currentValue + STEP_SCALE);
 };
 
 const initScale = () => {
-  scaleControlSmaller.addEventListener('click', () => onScaleControlSmallerClick());
-  scaleControlBigger.addEventListener('click', () => onScaleControlBiggerClick());
+  setScale(MAX_SCALE);
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
 };
 
 const resetScale = () => {
-  scaleControlSmaller.removeEventListener('click', () => onScaleControlSmallerClick());
-  scaleControlBigger.removeEventListener('click', () => onScaleControlBiggerClick());
+  setScale(MAX_SCALE);
+
+  scaleControlSmaller.removeEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.removeEventListener('click', onScaleControlBiggerClick);
 };
 
 export { initScale, resetScale };

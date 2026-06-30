@@ -1,7 +1,7 @@
 import {isEscapeKey} from '../util.js';
-import {initValidation, validateForm} from './validate.js';
+import {initValidation, validateForm, resetValidation} from './validate.js';
 import {initScale, resetScale} from './scale.js';
-import {initSlider} from './slider.js';
+import {initSlider, resetEffects} from './slider.js';
 
 
 const body = document.querySelector('body');
@@ -50,6 +50,8 @@ function closeUploadModal () {
   imgUploadForm.removeEventListener('submit', onFormSubmit);
   document.removeEventListener('keydown', onDocumentKeydown);
   resetScale();
+  resetEffects();
+  resetValidation();
 }
 
 const onUploadContainerClick = () => {
