@@ -7,33 +7,43 @@ const imageUploadEffectLevel = document.querySelector('.img-upload__effect-level
 let currentEffect = 'none';
 
 const effectConfig = {
-  none: { filter: 'none', from: 0, to: 1, step: 0.01, unit: '' },
-  chrome: { filter: 'grayscale', from: 0, to: 1, step: 0.01, unit: '' },
-  sepia: { filter: 'sepia', from: 0, to: 1, step: 0.01, unit: '' },
-  marvin: { filter: 'invert', from: 0, to: 100, step: 1, unit: '%' },
-  phobos: { filter: 'blur', from: 0, to: 3, step: 0.1, unit: 'px' },
-  heat: { filter: 'brightness', from: 1, to: 3, step: 0.01, unit: '' }
+  none: { filter: 'none', range: { min: 0, max: 1 }, step: 0.01, unit: '' },
+  chrome: { filter: 'grayscale', range: { min: 0, max: 1 }, step: 0.01, unit: '' },
+  sepia: { filter: 'sepia', range: { min: 0, max: 1 }, step: 0.01, unit: '' },
+  marvin: { filter: 'invert', range: { min: 0, max: 100 }, step: 1, unit: '%' },
+  phobos: { filter: 'blur', range: { min: 0, max: 3 }, step: 0.1, unit: 'px' },
+  heat: { filter: 'brightness', range: { min: 1, max: 3 }, step: 0.01, unit: '' }
 };
 
+const formatValue = (value, config) => config.step >= 1 ? Math.round(value) : Math.round(value * 100) / 100;
+
 const slider = noUiSlider.create(sliderContainer, {
-  range: {
-    min: effectConfig.none.from,
-    max: effectConfig.none.to
-  },
-  start: effectConfig.none.to,
+  range: effectConfig.none.range,
+  start: effectConfig.none.range.max,
   step: effectConfig.none.step,
   connect: 'lower',
   format: {
     to: (value) => {
       const config = effectConfig[currentEffect];
-      if (config && config.step >= 1) {
-        return Math.round(value);
-      }
-      return Math.round(value * 100) / 100;
+      return formatValue(value, config);
     },
     from: (value) => parseFloat(value)
   }
 });
+
+
+const updateSlider = (config, setValue = true) => {
+  slider.updateOptions({
+    range: config.range,
+    start: config.range.max,
+    step: config.step
+  });
+
+  if (setValue) {
+    slider.set(config.range.max);
+    effectLevelValue.value = config.range.max;
+  }
+};
 
 const applyEffect = (value) => {
   if (currentEffect === 'none') {
@@ -42,10 +52,7 @@ const applyEffect = (value) => {
   }
 
   const config = effectConfig[currentEffect];
-  const formattedValue = config.step >= 1
-    ? Math.round(value)
-    : Math.round(value * 100) / 100;
-
+  const formattedValue = formatValue(value, config);
   imagePreview.style.filter = `${config.filter}(${formattedValue}${config.unit})`;
 };
 
@@ -58,19 +65,8 @@ const changeEffectList = (evt) => {
     imagePreview.style.filter = 'none';
   } else {
     imageUploadEffectLevel.style.display = 'block';
-
-    slider.updateOptions({
-      range: {
-        min: config.from,
-        max: config.to
-      },
-      start: config.to,
-      step: config.step
-    });
-
-    slider.set(config.to);
-    effectLevelValue.value = config.to;
-    applyEffect(config.to);
+    updateSlider(config);
+    applyEffect(config.range.max);
   }
 };
 
@@ -91,17 +87,7 @@ const resetEffects = () => {
   imagePreview.style.filter = 'none';
 
   const config = effectConfig.none;
-  slider.updateOptions({
-    range: {
-      min: config.from,
-      max: config.to
-    },
-    start: config.to,
-    step: config.step
-  });
-
-  slider.set(config.to);
-  effectLevelValue.value = config.to;
+  updateSlider(config);
 
   const noneRadio = document.querySelector('.effects__radio[value="none"]');
   if (noneRadio) {
