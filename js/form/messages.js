@@ -7,11 +7,14 @@ const createModalManager = (modalType, buttonSelector) => {
   const closeModal = () => {
     const modal = document.querySelector(`.${modalClassName}`);
     if (modal) {
+      // eslint-disable-next-line no-use-before-define
       document.removeEventListener('keydown', handleKeydown);
+      // eslint-disable-next-line no-use-before-define
       document.removeEventListener('click', handleOutsideClick);
 
       const button = document.querySelector(buttonClass);
       if (button) {
+        // eslint-disable-next-line no-use-before-define
         button.removeEventListener('click', handleButtonClick);
       }
 
