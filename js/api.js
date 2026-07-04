@@ -14,12 +14,9 @@ const load = (route, method = Method.GET, body = null) =>
   fetch(`${BASE_URL}${route}`, {method, body})
     .then((response) => {
       if (!response.ok) {
-        throw new Error();
+        throw new Error(`Http error! status: ${response.status}`);
       }
       return response.json();
-    })
-    .catch(() => {
-      throw new Error();
     });
 
 const getData = () => load(Route.GET_DATA);

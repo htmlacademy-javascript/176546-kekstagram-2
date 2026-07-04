@@ -1,71 +1,52 @@
-import {isEscapeKey, showMessage} from '../util.js';
+import {isEscapeKey} from '../util.js';
 
-const createModalManager = (modalType, buttonSelector) => {
-  const modalClassName = modalType;
-  const buttonClass = buttonSelector;
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+
+const showPopup = (node) => {
+  const button = node.querySelector('button');
 
   const closeModal = () => {
-    const modal = document.querySelector(`.${modalClassName}`);
-    if (modal) {
-      // eslint-disable-next-line no-use-before-define
-      document.removeEventListener('keydown', handleKeydown);
-      // eslint-disable-next-line no-use-before-define
-      document.removeEventListener('click', handleOutsideClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
+    document.removeEventListener('click', onDocumentClick);
 
-      const button = document.querySelector(buttonClass);
-      if (button) {
-        // eslint-disable-next-line no-use-before-define
-        button.removeEventListener('click', handleButtonClick);
-      }
-
-      modal.remove();
-    }
+    node.remove();
   };
 
-  const handleKeydown = (evt) => {
+  function onDocumentKeydown(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       closeModal();
     }
-  };
+  }
 
-  const handleOutsideClick = (evt) => {
-    const modal = document.querySelector(`.${modalClassName}`);
-    if (modal && evt.target === modal) {
+  function onDocumentClick(evt) {
+    if (evt.target === node) {
       closeModal();
     }
-  };
+  }
 
-  const handleButtonClick = () => {
+  function handleButtonClick() {
     closeModal();
-  };
+  }
 
-  const addHandlers = () => {
-    const button = document.querySelector(buttonClass);
+  document.addEventListener('keydown', onDocumentKeydown);
+  document.addEventListener('click', onDocumentClick);
+  button.addEventListener('click', handleButtonClick);
 
-    document.addEventListener('keydown', handleKeydown);
-    document.addEventListener('click', handleOutsideClick);
-
-    if (button) {
-      button.addEventListener('click', handleButtonClick);
-    }
-  };
-
-  const showModal = (isError = false) => {
-    showMessage(modalClassName, isError);
-    addHandlers();
-  };
-
-  return {
-    showModal,
-    closeModal,
-  };
+  document.body.append(node);
 };
 
-const successModal = createModalManager('success', '.success__button');
-const errorModal = createModalManager('error', '.error__button');
+const showSuccessMessage = () => {
+  const successNode = successTemplate.cloneNode(true);
 
-const showSuccessMessage = () => successModal.showModal(false);
-const showErrorMessage = () => errorModal.showModal(false);
+  showPopup(successNode);
+};
+
+const showErrorMessage = () => {
+  const errorNode = errorTemplate.cloneNode(true);
+
+  showPopup(errorNode);
+};
 
 export {showSuccessMessage, showErrorMessage};

@@ -3,7 +3,7 @@ import {showSuccessMessage, showErrorMessage} from './messages.js';
 import {initValidation, validateForm, resetValidation} from './validate.js';
 import {initScale, resetScale} from './scale.js';
 import {initSlider, resetEffects} from './slider.js';
-import {sendData} from './api.js';
+import {sendData} from '../api.js';
 
 const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -26,7 +26,6 @@ const onDocumentKeydown = (evt) => {
     }
 
     evt.preventDefault();
-    // eslint-disable-next-line no-use-before-define
     closeUploadModal();
   }
 };
@@ -48,7 +47,6 @@ const onFormSubmit = (evt) => {
     blockSubmitButton();
     sendData(new FormData(evt.target))
       .then(() => {
-        // eslint-disable-next-line no-use-before-define
         closeUploadModal();
         showSuccessMessage();
       })
@@ -73,7 +71,7 @@ const openUploadModal = () => {
   initSlider();
 };
 
-const closeUploadModal = () => {
+function closeUploadModal() {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   imgUploadInput.value = '';
@@ -85,7 +83,7 @@ const closeUploadModal = () => {
   resetEffects();
   resetValidation();
   unblockSubmitButton();
-};
+}
 
 const onUploadContainerClick = () => {
   imgUploadInput.onchange = () => {
