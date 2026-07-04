@@ -6,7 +6,6 @@ import {getData} from './api.js';
 import {showMessage} from './util.js';
 
 
-
 getData()
   .then((data) => {
     createThumbnails(data);
