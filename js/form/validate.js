@@ -3,8 +3,10 @@ const hashTags = imgUploadForm.querySelector('.text__hashtags');
 const descriptionTextarea = imgUploadForm.querySelector('.text__description');
 
 const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
+const MAX_HASHTAGS = 5;
+const MAX_COMMENT_LENGTH = 140;
 
-const pristine = new Pristine(imgUploadForm, {
+const createPristine = () => new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--error',
   successClass: 'img-upload__field-wrapper--success',
@@ -13,70 +15,107 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'img-upload__field-wrapper--error-text'
 });
 
-const validateHashTagsAmount = (hashtags) => hashtags.length <= 5;
+let pristine = createPristine();
 
-const validateHashTag = (value) => {
-
-  if (value.trim() === '') {
+const validateHashtags = (value) => {
+  if (!value.trim()) {
     return true;
   }
 
   const hashtags = value.trim().split(/\s+/);
 
-  const isValidAmount = validateHashTagsAmount(hashtags);
-  const isValidDoubles = new Set(hashtags).size === hashtags.length;
+  const errors = {
+    count: hashtags.length > MAX_HASHTAGS,
+    unique: new Set(hashtags).size !== hashtags.length,
+    format: !hashtags.every((tag) => HASHTAG_REGEX.test(tag))
+  };
 
-  if (hashtags.length > 5) {
-    return false;
+  if (errors.count) {
+    return `Превышено количество хэштегов (максимум ${MAX_HASHTAGS}, сейчас ${hashtags.length})`;
   }
 
-  if (!isValidAmount || !isValidDoubles) {
-    return false;
+  if (errors.unique) {
+    const duplicates = hashtags.filter((tag, i) => hashtags.indexOf(tag) !== i);
+    return `Повторяющиеся хэштеги: ${[...new Set(duplicates)].join(', ')}`;
   }
 
-  for (const tag of hashtags) {
-    if (!HASHTAG_REGEX.test(tag)) {
-      return false;
-    }
+  if (errors.format) {
+    const invalid = hashtags.filter((tag) => !HASHTAG_REGEX.test(tag));
+    return `Невалидный хэштег: ${invalid.join(', ')} (должен начинаться с #, содержать буквы/цифры, до 19 символов)`;
   }
 
   return true;
 };
 
-const validateTextarea = (value) => value.length <= 140;
+const validateComment = (value) => {
+  if (value.length > MAX_COMMENT_LENGTH) {
+    return `Комментарий слишком длинный (${value.length}/${MAX_COMMENT_LENGTH} символов)`;
+  }
+  return true;
+};
 
 const initValidation = () => {
+  pristine = createPristine();
+
   pristine.addValidator(
     hashTags,
-    validateHashTag,
-    'Хэштег должен начинаться с #, содержать буквы/цифры, не более 5 уникальных'
+    (value) => {
+      const result = validateHashtags(value);
+      return result === true;
+    },
+    (value) => {
+      const result = validateHashtags(value);
+      return typeof result === 'string' ? result : '';
+    },
+    1,
+    false
   );
 
   pristine.addValidator(
     descriptionTextarea,
-    validateTextarea,
-    'Комментарий не более 140 символов'
+    (value) => {
+      const result = validateComment(value);
+      return result === true;
+    },
+    (value) => {
+      const result = validateComment(value);
+      return typeof result === 'string' ? result : '';
+    },
+    1,
+    false
   );
 };
 
-const resetValidation = () => {
+const clearValidationUI = () => {
+  document.querySelectorAll('.img-upload__field-wrapper--error-text')
+    .forEach((el) => el.remove());
+
+  document.querySelectorAll('.img-upload__field-wrapper')
+    .forEach((wrapper) => {
+      wrapper.classList.remove('img-upload__field-wrapper--error', 'img-upload__field-wrapper--success');
+    });
+
   hashTags.value = '';
   descriptionTextarea.value = '';
-
-  const errorTexts = imgUploadForm.querySelectorAll('.img-upload__field-wrapper--error-text');
-  errorTexts.forEach((el) => el.remove());
-
-  const wrappers = imgUploadForm.querySelectorAll('.img-upload__field-wrapper');
-  wrappers.forEach((wrapper) => {
-    wrapper.classList.remove('img-upload__field-wrapper--error');
-    wrapper.classList.remove('img-upload__field-wrapper--success');
-  });
-
-  if (pristine && typeof pristine.reset === 'function') {
-    pristine.reset();
-  }
+  hashTags.classList.remove('error');
+  descriptionTextarea.classList.remove('error');
 };
 
-const validateForm = () => pristine.validate();
+const resetValidation = () => {
+  clearValidationUI();
+  if (pristine?.reset) {
+    pristine.reset();
+  }
+
+  initValidation();
+};
+
+const validateForm = () => {
+  if (!pristine) {
+    initValidation();
+  }
+
+  return pristine.validate();
+};
 
 export { initValidation, validateForm, resetValidation };

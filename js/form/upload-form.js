@@ -1,8 +1,9 @@
 import {isEscapeKey} from '../util.js';
+import {showSuccessMessage, showErrorMessage} from './messages.js';
 import {initValidation, validateForm, resetValidation} from './validate.js';
 import {initScale, resetScale} from './scale.js';
 import {initSlider, resetEffects} from './slider.js';
-
+import {sendData} from '../api.js';
 
 const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -11,22 +12,50 @@ const imgUploadInput = document.querySelector('.img-upload__input');
 const imgUploadCancel = imgUploadForm.querySelector('.img-upload__cancel');
 const hashTags = imgUploadForm.querySelector('.text__hashtags');
 const descriptionTextarea = imgUploadForm.querySelector('.text__description');
+const submitButton = imgUploadForm.querySelector('.img-upload__submit');
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     const activeElement = document.activeElement;
     const isFormElementFocused = activeElement === hashTags || activeElement === descriptionTextarea;
 
-    if (!isFormElementFocused) {
-      evt.preventDefault();
-      closeUploadModal();
+    const isErrorModalOpen = document.querySelector('.error');
+
+    if (isFormElementFocused || isErrorModalOpen) {
+      return;
     }
+
+    evt.preventDefault();
+    closeUploadModal();
   }
 };
 
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Отправка...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
 const onFormSubmit = (evt) => {
-  if (!validateForm()) {
-    evt.preventDefault();
+  evt.preventDefault();
+
+  if (validateForm()) {
+    blockSubmitButton();
+    sendData(new FormData(evt.target))
+      .then(() => {
+        closeUploadModal();
+        showSuccessMessage();
+      })
+      .catch(() => {
+        showErrorMessage();
+      })
+      .finally(() => {
+        unblockSubmitButton();
+      });
   }
 };
 
@@ -42,16 +71,18 @@ const openUploadModal = () => {
   initSlider();
 };
 
-function closeUploadModal () {
+function closeUploadModal() {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   imgUploadInput.value = '';
 
-  imgUploadForm.removeEventListener('submit', onFormSubmit);
   document.removeEventListener('keydown', onDocumentKeydown);
+  imgUploadForm.removeEventListener('submit', onFormSubmit);
+
   resetScale();
   resetEffects();
   resetValidation();
+  unblockSubmitButton();
 }
 
 const onUploadContainerClick = () => {

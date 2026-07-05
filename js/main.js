@@ -1,12 +1,18 @@
 import { createThumbnails } from './thumbnails.js';
-import { generatePhotos } from './data.js';
 import { setPictureListener } from './modal.js';
 import { createBigPicture } from './big-picture.js';
 import { setUploadListener } from './form/upload-form.js';
+import {getData} from './api.js';
+import {showMessage} from './util.js';
 
-const photos = generatePhotos();
 
-createThumbnails(photos);
-setPictureListener(photos, createBigPicture);
-setUploadListener();
+getData()
+  .then((data) => {
+    createThumbnails(data);
+    setPictureListener(data, createBigPicture);
+    setUploadListener();
+  })
+  .catch(() => {
+    showMessage('data-error', true);
+  });
 
