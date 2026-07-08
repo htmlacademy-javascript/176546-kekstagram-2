@@ -2,6 +2,7 @@ import {createThumbnails} from './thumbnails.js';
 import {debounce} from './util.js';
 
 const RERENDER_DELAY = 500;
+const RANDOM_PHOTOS_COUNT = 10;
 
 const filters = document.querySelector('.img-filters');
 const filterButtons = {
@@ -16,7 +17,9 @@ const comparePhotos = (a, b) => b.comments.length - a.comments.length;
 
 const filterMap = {
   default: (photos) => photos,
-  random: (photos) => [...photos].sort(() => Math.random() - 0.5),
+  random: (photos) => [...photos]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, RANDOM_PHOTOS_COUNT),
   discussed: (photos) => [...photos].sort(comparePhotos)
 };
 
