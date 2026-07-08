@@ -17,7 +17,7 @@ const renderComment = (comment) => {
   p.classList.add('social__text');
 
   img.src = comment.avatar;
-  img.alt = comment.alt;
+  img.alt = comment.name;
   img.width = 35;
   img.height = 35;
 

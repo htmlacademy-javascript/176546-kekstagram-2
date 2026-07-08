@@ -1,32 +1,24 @@
 import {createThumbnails} from './thumbnails.js';
 import {debounce} from './util.js';
 
-const RERENDER_DELAY = 500;
 const RANDOM_PHOTOS_COUNT = 10;
 
 const filters = document.querySelector('.img-filters');
-const filterButtons = {
-  default: document.querySelector('.img-filters__button[id="filter-default"]'),
-  random: document.querySelector('.img-filters__button[id="filter-random"]'),
-  discussed: document.querySelector('.img-filters__button[id="filter-discussed"]')
-};
-
-let originalPhotos;
-
-const comparePhotos = (a, b) => b.comments.length - a.comments.length;
+const filtersForm = document.querySelector('.img-filters__form');
+const filterButtons = document.querySelectorAll('.img-filters__button');
 
 const filterMap = {
   default: (photos) => photos,
   random: (photos) => [...photos]
-    .sort(() => Math.random() - 0.5)
+    .toSorted(() => Math.random() - 0.5)
     .slice(0, RANDOM_PHOTOS_COUNT),
-  discussed: (photos) => [...photos].sort(comparePhotos)
+  discussed: (photos) => photos.sort((a, b) => b.comments.length - a.comments.length)
 };
 
 const clearPhotos = () => document.querySelectorAll('.pictures .picture').forEach((el) => el.remove());
 
 const setActiveFilter = (button) => {
-  document.querySelector('.img-filters__button--active')?.classList.remove('img-filters__button--active');
+  filterButtons.forEach((item) => item.classList.remove('img-filters__button--active'));
   button.classList.add('img-filters__button--active');
 };
 
@@ -35,20 +27,25 @@ const renderPhotos = (photos) => {
   createThumbnails(photos);
 };
 
-const debouncedRender = debounce(renderPhotos, RERENDER_DELAY);
+const debouncedRender = debounce(renderPhotos);
 
-const handleFilterClick = (evt, filterType) => {
-  const photos = filterMap[filterType](originalPhotos);
-  debouncedRender(photos);
+const onFilterFormClick = (evt, photos) => {
+  if (!evt.target.id) {
+    return;
+  }
+
   setActiveFilter(evt.target);
+
+  const [, newFilter] = evt.target.id.split('-');
+
+  const filteredPhotos = filterMap[newFilter](photos);
+
+  debouncedRender(filteredPhotos);
 };
 
 const initFilters = (data) => {
-  originalPhotos = data;
   filters.classList.remove('img-filters--inactive');
-  Object.entries(filterButtons).forEach(([type, button]) => {
-    button.addEventListener('click', (evt) => handleFilterClick(evt, type));
-  });
+  filtersForm.addEventListener('click', (evt) => onFilterFormClick(evt, data));
 };
 
 export { initFilters };

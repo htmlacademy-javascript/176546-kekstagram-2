@@ -85,14 +85,8 @@ function closeUploadModal() {
   unblockSubmitButton();
 }
 
-const onUploadContainerClick = () => {
-  imgUploadInput.onchange = () => {
-    openUploadModal();
-  };
-};
-
 const setUploadListener = () => {
-  imgUploadInput.addEventListener('click', onUploadContainerClick);
+  imgUploadInput.addEventListener('change', openUploadModal);
   imgUploadCancel.addEventListener('click', closeUploadModal);
 };
 
