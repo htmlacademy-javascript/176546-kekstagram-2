@@ -26,13 +26,13 @@ const showPopup = (node) => {
     }
   }
 
-  function handleButtonClick() {
+  function onButtonClick() {
     closeModal();
   }
 
   document.addEventListener('keydown', onDocumentKeydown);
   document.addEventListener('click', onDocumentClick);
-  button.addEventListener('click', handleButtonClick);
+  button.addEventListener('click', onButtonClick);
 
   document.body.append(node);
 };

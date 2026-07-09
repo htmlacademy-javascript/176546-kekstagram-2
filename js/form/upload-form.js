@@ -26,7 +26,7 @@ const onDocumentKeydown = (evt) => {
     }
 
     evt.preventDefault();
-    closeUploadModal();
+    onImgUploadCancelClick();
   }
 };
 
@@ -47,7 +47,7 @@ const onFormSubmit = (evt) => {
     blockSubmitButton();
     sendData(new FormData(evt.target))
       .then(() => {
-        closeUploadModal();
+        onImgUploadCancelClick();
         showSuccessMessage();
       })
       .catch(() => {
@@ -59,7 +59,7 @@ const onFormSubmit = (evt) => {
   }
 };
 
-const openUploadModal = () => {
+const onImgUploadInputChange = () => {
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
 
@@ -71,7 +71,7 @@ const openUploadModal = () => {
   initSlider();
 };
 
-function closeUploadModal() {
+function onImgUploadCancelClick() {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   imgUploadInput.value = '';
@@ -86,8 +86,8 @@ function closeUploadModal() {
 }
 
 const setUploadListener = () => {
-  imgUploadInput.addEventListener('change', openUploadModal);
-  imgUploadCancel.addEventListener('click', closeUploadModal);
+  imgUploadInput.addEventListener('change', onImgUploadInputChange);
+  imgUploadCancel.addEventListener('click', onImgUploadCancelClick);
 };
 
 export { setUploadListener };

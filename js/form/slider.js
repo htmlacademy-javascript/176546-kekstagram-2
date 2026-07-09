@@ -56,7 +56,7 @@ const applyEffect = (value) => {
   imagePreview.style.filter = `${config.filter}(${formattedValue}${config.unit})`;
 };
 
-const changeEffectList = (evt) => {
+const onEffectListChange = (evt) => {
   currentEffect = evt.target.value;
   const config = effectConfig[currentEffect];
 
@@ -97,7 +97,7 @@ const resetEffects = () => {
 
 const initSlider = () => {
   imageUploadEffectLevel.style.display = 'none';
-  effectsList.addEventListener('change', changeEffectList);
+  effectsList.addEventListener('change', onEffectListChange);
   sliderUpdate();
 };
 
