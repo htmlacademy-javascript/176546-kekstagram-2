@@ -1,11 +1,11 @@
+const MIN_SCALE = 25;
+const STEP_SCALE = 25;
+const MAX_SCALE = 100;
+
 const scaleControlValue = document.querySelector('.scale__control--value');
 const preview = document.querySelector('.img-upload__preview img');
 const scaleControlSmaller = document.querySelector('.scale__control--smaller');
 const scaleControlBigger = document.querySelector('.scale__control--bigger');
-
-const MIN_SCALE = 25;
-const STEP_SCALE = 25;
-const MAX_SCALE = 100;
 
 const setScale = (value) => {
   const clampedValue = Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));

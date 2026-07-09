@@ -8,11 +8,11 @@ const filtersForm = document.querySelector('.img-filters__form');
 const filterButtons = document.querySelectorAll('.img-filters__button');
 
 const filterMap = {
-  default: (photos) => photos,
-  random: (photos) => [...photos]
+  getDefault: (photos) => photos,
+  getRandom: (photos) => [...photos]
     .toSorted(() => Math.random() - 0.5)
     .slice(0, RANDOM_PHOTOS_COUNT),
-  discussed: (photos) => photos.sort((a, b) => b.comments.length - a.comments.length)
+  getDiscussed: (photos) => [...photos].toSorted((a, b) => b.comments.length - a.comments.length)
 };
 
 const clearPhotos = () => document.querySelectorAll('.pictures .picture').forEach((el) => el.remove());
@@ -38,7 +38,7 @@ const onFilterFormClick = (evt, photos) => {
 
   const [, newFilter] = evt.target.id.split('-');
 
-  const filteredPhotos = filterMap[newFilter](photos);
+  const filteredPhotos = filterMap[`get${newFilter.charAt(0).toUpperCase() + newFilter.slice(1)}`](photos);
 
   debouncedRender(filteredPhotos);
 };

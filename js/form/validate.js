@@ -1,10 +1,10 @@
-const imgUploadForm = document.querySelector('.img-upload__form');
-const hashTags = imgUploadForm.querySelector('.text__hashtags');
-const descriptionTextarea = imgUploadForm.querySelector('.text__description');
-
 const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
 const MAX_HASHTAGS = 5;
 const MAX_COMMENT_LENGTH = 140;
+
+const imgUploadForm = document.querySelector('.img-upload__form');
+const hashTags = imgUploadForm.querySelector('.text__hashtags');
+const descriptionTextarea = imgUploadForm.querySelector('.text__description');
 
 const createPristine = () => new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',

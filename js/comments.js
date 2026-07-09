@@ -1,8 +1,8 @@
+const COMMENTS_PER_LOAD = 5;
+
 const socialCommentsElement = document.querySelector('.social__comments');
 const showCountCommentElement = document.querySelector('.social__comment-shown-count');
 const loadButton = document.querySelector('.comments-loader');
-
-const COMMENTS_PER_LOAD = 5;
 
 let allComments = [];
 let currentIndex = 5;
